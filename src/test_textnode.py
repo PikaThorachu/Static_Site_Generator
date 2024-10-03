@@ -40,6 +40,25 @@ class TestTextNode(unittest.TestCase):
             "TextNode(This is a text node, text, https://www.boot.dev)", repr(node)
         )
 
+    def test_to_html_text(self):
+        node = TextNode("This is normal text", "text")
+        self.assertEqual(node.text_node_to_html_node(), 'LeafNode("This is normal text")')
+
+    def test_to_html_bold(self):
+        node = TextNode("bold", "bold")
+        self.assertEqual(node.text_node_to_html_node(), 'LeafNode("b", "bold")')
+
+    def test_to_html_italic(self):
+        node = TextNode("italic", "italic")
+        self.assertEqual(node.text_node_to_html_node(), 'LeafNode("i", "italic")')
+
+    def test_to_html_code(self):
+        node = TextNode("string of code", "code")
+        self.assertEqual(node.text_node_to_html_node(), 'LeafNode("code", "string of code")')
+    
+    def test_to_html_link(self):
+        node = TextNode("this is anchor text", "link", "https://www.image_link.com")
+        self.assertEqual(node.text_node_to_html_node(), 'LeafNode("a", "this is anchor text", {"href", "https://www.image_link.com"})')
 
 if __name__ == "__main__":
     unittest.main()

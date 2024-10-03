@@ -21,3 +21,19 @@ class TextNode:
 
     def __repr__(self):
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
+    
+    def text_node_to_html_node(text_node):
+        if text_node.text_type == "text":
+            return f'LeafNode("{text_node.text}")'
+        elif text_node.text_type == "bold":
+            return f'LeafNode("b", "{text_node.text}")'
+        elif text_node.text_type == "italic":
+            return f'LeafNode("i", "{text_node.text}")'
+        elif text_node.text_type == "code":
+            return f'LeafNode("code", "{text_node.text}")'
+        elif text_node.text_type == "link":
+            prop = '{"href", ' + f'"{text_node.url}"' + "}"
+            return f'LeafNode("a", "{text_node.text}", {prop})'
+        elif text_node.text_type == "img":
+            prop = '{"src":' + f'"{text_node.url}"' + ', "alt", ' + f'"{text_node.text}"' + "}"
+            return f'LeafNode("img", "None", {prop})'
