@@ -60,15 +60,27 @@ class TestTextNode(unittest.TestCase):
         node = TextNode("this is anchor text", "link", "https://www.image_link.com")
         self.assertEqual(node.text_node_to_html_node(), 'LeafNode("a", "this is anchor text", {"href", "https://www.image_link.com"})')
 
-def test_delimiter_bold(self):
-    node = TextNode("This is a string with **bold** text.", "text")
-    result = split_nodes_delimiter([node], "**", "bold")
-    expected = [
-        TextNode("This is a string with ", "text"),
-        TextNode("bold", "bold"),
-        TextNode(" text.", "text")
-    ]
-    self.assertEqual(result, expected)
+    def test_delimiter_bold(self):
+        node = TextNode("This is a string with **bold** text.", "text")
+        result = TextNode.split_nodes_delimiter([node], "**", "bold")
+        expected = [
+            TextNode("This is a string with ", "text"),
+            TextNode("bold", "bold"),
+            TextNode(" text.", "text")
+        ]
+        self.assertEqual(result, expected)
+
+    def test_extract_images_1(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"    
+        results = TextNode.extract_markdown_images(text)
+        expected = [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")]
+        self.assertEqual(results, expected)
+
+    def test_extract_links(self):
+        text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        results = TextNode.extract_markdown_links(text)
+        expected = [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
+        self.assertEqual(results, expected)
 
 if __name__ == "__main__":
     unittest.main()

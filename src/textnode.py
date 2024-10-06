@@ -1,3 +1,5 @@
+import re
+
 text_type_text = "text"
 text_type_bold = "bold"
 text_type_italic = "italic"
@@ -66,3 +68,13 @@ class TextNode:
                         else:
                             new_nodes.append(TextNode(part, text_type))
         return new_nodes
+    
+    def extract_markdown_images(text):
+        pattern = r'!\[(.*?)\]\((.*?)\)'
+        matches = re.findall(pattern, text)
+        return matches
+    
+    def extract_markdown_links(text):
+        pattern = r'\[(.*?)\]\((.*?)\)'
+        matches = re.findall(pattern, text)
+        return matches
