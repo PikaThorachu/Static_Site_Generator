@@ -5,6 +5,12 @@ text_type_code = "code"
 text_type_link = "link"
 text_type_image = "image"
 
+text_delimiter_bold = "**"
+text_delimiter_italic = "*"
+text_delimiter_code = "`"
+text_delimiter_link = "[link]"
+text_delimiter_image = "!"
+
 
 class TextNode:
     def __init__(self, text, text_type, url=None):
@@ -37,3 +43,26 @@ class TextNode:
         elif text_node.text_type == "img":
             prop = '{"src":' + f'"{text_node.url}"' + ', "alt", ' + f'"{text_node.text}"' + "}"
             return f'LeafNode("img", "None", {prop})'
+    
+    def split_nodes_delimiter(old_nodes, delimiter, text_type):
+        new_nodes = []
+        for node in old_nodes:
+            if node.text_type != "text":
+                new_nodes.append(node)
+            elif node.text.count(delimiter) == 0:
+                new_nodes.append(node)
+            elif node.text.count(delimiter) % 2 != 0:
+                raise ValueError("Invalid Markdown syntax")
+            else:
+                parts = node.text.split(delimiter)
+                for i, part in enumerate(parts):
+                    if i % 2 == 0:
+                        # This is text outside delimiters
+                        new_nodes.append(TextNode(part, "text"))
+                    else:
+                        # This is text that was between delimiters
+                        if part == "":
+                            pass
+                        else:
+                            new_nodes.append(TextNode(part, text_type))
+        return new_nodes
