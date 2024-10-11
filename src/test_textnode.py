@@ -82,5 +82,61 @@ class TestTextNode(unittest.TestCase):
         expected = [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
         self.assertEqual(results, expected)
 
+    def test_split_nodes_img(self):
+        text = [TextNode("This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", text_type="text")]
+        results = TextNode.split_nodes_image(text)
+        expected = [
+            TextNode("This is text with a ", text_type="text"),
+            TextNode("rick roll", text_type="img", url="https://i.imgur.com/aKaOqIh.gif"),
+            TextNode(" and ", text_type="text"),
+            TextNode("obi wan", text_type="img", url="https://i.imgur.com/fJRm4Vk.jpeg")
+        ]
+        self.assertEqual(results, expected)
+
+    def test_split_nodes_img_initial_delim(self):
+        text = [TextNode("![rick roll](https://i.imgur.com/aKaOqIh.gif) this is text with a and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", text_type="text")]
+        results = TextNode.split_nodes_image(text)
+        expected = [
+            TextNode("rick roll", text_type="img", url="https://i.imgur.com/aKaOqIh.gif"),
+            TextNode(" this is text with a and ", text_type="text"),
+            TextNode("obi wan", text_type="img", url="https://i.imgur.com/fJRm4Vk.jpeg")
+        ]
+        self.assertEqual(results, expected)
+
+    def test_split_nodes_img_no_delim(self):
+        text = [TextNode("This is text with no image alt text or url.", text_type="text")]
+        results = TextNode.split_nodes_image(text)
+        expected = [
+            TextNode("This is text with no image alt text or url.", text_type="text"),
+        ]
+        self.assertEqual(results, expected)
+        
+    def test_split_nodes_link_no_link(self):
+        text = [TextNode("This is a paragraph with no link", "text")]
+        results = TextNode.split_nodes_link(text)
+        expected = [TextNode("This is a paragraph with no link", "text")]
+        self.assertEqual(results, expected)
+
+    def text_split_nodes_link(self):
+        text = [TextNode("This is a paragraph with a link [link_text](https://google.com).", "text")]
+        results = TextNode.split_nodes_link(text)
+        expected = [
+            TextNode("This is a paragraph with a link ", "text"),
+            TextNode("link_text", "link", url="https://google.com")
+        ]
+        self.assertEqual(results, expected)
+
+    def text_split_nodes_link_multiple_links(self):
+        text = [TextNode("This is a paragraph with multiple links [link_text](https://google.com), [other_link_text](https://www.getsome.com).", "text")]
+        results = TextNode.split_nodes_link(text)
+        expected = [
+            TextNode("This is a paragraph with multiple links ", "text"),
+            TextNode("link_text", "link", url="https://google.com"),
+            TextNode(", ", "text"),
+            TextNode("other_link_text", "link", url="https://www.getsome.com"),
+            TextNode(".", "text")
+        ]
+        self.assertEqual(results, expected)
+
 if __name__ == "__main__":
     unittest.main()

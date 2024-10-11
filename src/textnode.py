@@ -70,11 +70,79 @@ class TextNode:
         return new_nodes
     
     def extract_markdown_images(text):
-        pattern = r'!\[(.*?)\]\((.*?)\)'
+        pattern = r"!\[([^\[\]]*)\]\(([^\(\)]*)\)"
         matches = re.findall(pattern, text)
+        if not matches:
+            return []
         return matches
     
     def extract_markdown_links(text):
-        pattern = r'\[(.*?)\]\((.*?)\)'
+        pattern = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
         matches = re.findall(pattern, text)
+        if not matches:
+            return {}
         return matches
+        
+    
+    def split_nodes_image(old_nodes):
+        new_nodes = []
+        if not old_nodes:
+            raise Exception("No nodes detected")
+        for node in old_nodes:
+            img_tuples = TextNode.extract_markdown_images(node.text)
+            if not img_tuples:
+                new_nodes.append(node)
+            else:
+                temp = node.text
+                for img, url in img_tuples:
+                    sequence = temp.split(f"![{img}]({url})", 1)
+                    if sequence[0] == "":
+                        pass
+                    else:
+                        new_nodes.append(TextNode(sequence[0], "text"))
+                    new_nodes.append(TextNode(img, text_type="img", url=url))
+                    if sequence[1]:
+                        temp = sequence[1]
+        return new_nodes
+
+    def split_nodes_link(old_nodes):
+        new_nodes = []
+        if not old_nodes:
+            raise Exception("No nodes detected")
+        for node in old_nodes:
+            link_tuples = TextNode.extract_markdown_links(node.text)
+            if not link_tuples:
+                new_nodes.append(node)
+            else:
+                temp = node.text
+                for link, url in link_tuples:
+                    sequence = temp.split(f"[{link}]({url})", 1)
+                    if sequence[0] == "":
+                        pass
+                    else:
+                        new_nodes.append(TextNode(sequence[0], "text"))
+                    new_nodes.append(TextNode(link, text_type="link", url=url))
+                    if sequence[1]:
+                        temp = sequence[1]
+                new_nodes.append(TextNode(temp, "text"))
+        return new_nodes
+
+
+
+
+
+
+
+# Start with a string
+# new_nodes = [] to hold new nods as they are split and formatted
+# extract markdown images
+# results in a list of tuples (alt_text, img_url)
+# sequences = [] outside the loop so it doesn't get reset each iteration
+# for each tuple:
+    # split the string using the img markdown as delimiter
+    # if sequence[0] is ""
+        # pass
+    # else format as text textnode and append to new nodes
+    # format delimiter as img node and append to new nodes
+    # if sequence[1]:
+    # update sequence[] to sequence[1]
