@@ -1,12 +1,16 @@
 from textnode import TextNode
+from markdown_to_blocks import markdown_to_blocks
 
 
 def main():
-    nodes = [
-        TextNode('This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)', "text"),
-        TextNode("This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)", "text")
-    ]
-    results = TextNode.text_to_textnodes(nodes)
-    print('\n'.join(str(i) for i in results))
-    
+    markdown = """# This is a heading
+
+    This is a paragraph of text. It has some **bold** and *italic* words inside of it.
+
+    * This is the first list item in a list block
+    * This is a list item
+    * This is another list item"""
+    results = markdown_to_blocks(markdown)
+    print(results)
+
 main()
