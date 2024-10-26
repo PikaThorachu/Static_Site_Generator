@@ -1,4 +1,10 @@
 import re
+from enum import Enum
+
+class NodeType(Enum):
+    HTML = "html"
+    LEAF = "leaf"
+    TEXT = "text"
 
 text_type_text = "text"
 text_type_bold = "bold"
@@ -144,10 +150,13 @@ class TextNode:
                             new_nodes.append(TextNode(sequence[0], "text"))
         return new_nodes
 
-    def text_to_textnodes(text_nodes):
-        bold_text_nodes = TextNode.split_nodes_delimiter(text_nodes, text_delimiter_bold, text_type_bold)
-        italic_text_nodes = TextNode.split_nodes_delimiter(bold_text_nodes, text_delimiter_italic, text_type_italic)
-        code_text_nodes = TextNode.split_nodes_delimiter(italic_text_nodes, text_delimiter_code, text_type_code)
-        img_text_nodes = TextNode.split_nodes_image(code_text_nodes)
-        link_text_nodes = TextNode.split_nodes_link(img_text_nodes)
+    def text_to_textnodes(text: str):
+        text_nodes = []
+        text_nodes.append(TextNode(text, "text"))
+        for node in text_nodes:
+            bold_text_nodes = TextNode.split_nodes_delimiter(node, text_delimiter_bold, text_type_bold)
+            italic_text_nodes = TextNode.split_nodes_delimiter(bold_text_nodes, text_delimiter_italic, text_type_italic)
+            code_text_nodes = TextNode.split_nodes_delimiter(italic_text_nodes, text_delimiter_code, text_type_code)
+            img_text_nodes = TextNode.split_nodes_image(code_text_nodes)
+            link_text_nodes = TextNode.split_nodes_link(img_text_nodes)
         return link_text_nodes
