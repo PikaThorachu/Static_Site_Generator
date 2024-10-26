@@ -3,14 +3,14 @@ from markdown_to_blocks import markdown_to_blocks
 
 
 def main():
-    markdown = """# This is a heading
-
-    This is a paragraph of text. It has some **bold** and *italic* words inside of it.
-
-    * This is the first list item in a list block
-    * This is a list item
-    * This is another list item"""
-    results = markdown_to_blocks(markdown)
+    text = [TextNode("This is a paragraph with a link [link_text](https://google.com).", "text")]
+    results = TextNode.split_nodes_link(text)
+    expected = [
+        TextNode("This is a paragraph with a link ", "text"),
+        TextNode("link_text", "link", url="https://google.com")
+    ]
+    print(expected)
     print(results)
+
 
 main()
