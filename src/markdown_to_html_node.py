@@ -2,6 +2,7 @@ from markdown_to_blocks import markdown_to_blocks
 from block_to_block_type import block_to_block_type
 from htmlnode import HTMLNode
 from textnode import TextNode
+from inline_markdown import text_to_text_node
 
 # This function takes markdown text as input and outputs the text as HTMLNodes
 def markdown_to_html_node(markdown: str):
