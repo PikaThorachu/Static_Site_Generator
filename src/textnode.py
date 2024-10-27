@@ -9,12 +9,13 @@ class TextType(Enum):
     CODE = "code"
     LINK = "link"
     IMAGE = "image"
+    LIST_ITEM = "list_item"
 
 
 class TextNode:
     def __init__(self, text, text_type, url=None):
         self.text = text
-        self.text_type = text_type.value
+        self.text_type = text_type
         self.url = url
 
     def __eq__(self, other):
@@ -41,4 +42,7 @@ def text_node_to_html_node(text_node):
         return LeafNode("a", text_node.text, {"href": text_node.url})
     if text_node.text_type == TextType.IMAGE.value:
         return LeafNode("image", "", {"src": text_node.url, "alt": text_node.text})
+    if text_node.text_type == TextType.LIST_ITEM.value:
+        return LeafNode("list_item", text_node.text)
     raise ValueError(f"Invalid text type: {text_node.text_type}")
+

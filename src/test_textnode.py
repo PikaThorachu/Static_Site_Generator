@@ -54,6 +54,9 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         self.assertEqual(html_node.tag, "b")
         self.assertEqual(html_node.value, "This is bold")
 
+    def test_list_item(self):
+        
+
 
 if __name__ == "__main__":
     unittest.main()

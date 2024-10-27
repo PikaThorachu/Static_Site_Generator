@@ -1,11 +1,11 @@
 from markdown_to_blocks import markdown_to_blocks
 from block_to_block_type import block_to_block_type
 from htmlnode import HTMLNode
-from textnode import TextNode
+from textnode import TextNode, TextType
 from inline_markdown import text_to_text_node
 
 # This function takes markdown text as input and outputs the text as HTMLNodes
-def markdown_to_html_node(markdown: str):
+def markdown_to_html_node(markdown: str) -> HTMLNode:
     # Separate markdown text into blocks
     blocks = markdown_to_blocks(markdown)
     HTML_node = HTMLNode("div", value=None, children=[])
@@ -53,26 +53,28 @@ def markdown_to_html_node(markdown: str):
         elif block_type == 'unordered_list':
             stripped_text = block.replace("* ", "")
             block_html_node = HTMLNode("unordered_list", stripped_text)
-            HTML_node.children.append(block_html_node) 
+            block_html_node.children = list_node_to_text_nodes(stripped_text)
+            block_html_node.value = ""
+            HTML_node.children.append(block_html_node)  
         # Ordered list blocks
         elif block_type == 'ordered_list':
             stripped_text = block
             block_html_node = HTMLNode("ordered_list", stripped_text)
+            block_html_node.children = list_node_to_text_nodes(stripped_text)
+            block_html_node.value = ""
             HTML_node.children.append(block_html_node)   
         # Paragraph blocks   
         else:
             block_html_node = HTMLNode("paragraph", block)
+            block_html_node.children = text_to_text_node(block)
+            block_html_node.value = ""
             HTML_node.children.append(block_html_node)   
     return HTML_node
 
-# Helper functions 
-## function to take paragraph html node, split into text nodes, then add to .children
-## function to take ordered list, split into text nodes, add to .children
-## function to take unordere list, split into nodes, add to .children
-
-def split_html_nodes_into_text_nodes(HTML_node):
+# Helper Functions
+def list_node_to_text_nodes(ordered_list: str) -> list:
+    split_ordered_list = ordered_list.split('\n')
     children_nodes = []
-    for node in HTML_node.children:
-        if node.tag == "paragraph":
-            child_node = TextNode.text_to_textnodes(node.value)
-    print(child_node)
+    for item in split_ordered_list:
+        children_nodes.append(TextNode(item, TextType.LIST_ITEM))
+    return children_nodes
