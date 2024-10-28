@@ -24,7 +24,6 @@ class TestMarkdownToBlocks(unittest.TestCase):
             "1. And this is an ordered list.\n2. Another line of the list.\n3. Final line in ordered list.",
         ]
         self.assertEqual(result, expected)
-        print(f'result: {result}')
 
 if __name__ == '__main__':
     unittest.main()

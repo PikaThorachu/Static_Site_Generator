@@ -1,6 +1,6 @@
 import unittest
 from markdown_to_html_node import markdown_to_html_node 
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode
 from textnode import TextNode
 
 class TestMarkdown_to_HTML_Node(unittest.TestCase):
@@ -9,28 +9,35 @@ class TestMarkdown_to_HTML_Node(unittest.TestCase):
 
 ## This is a heading_2
 
-### This is a heading_3
+### This is a heading_3'''
+        results = markdown_to_html_node(markdown)
+        expected = HTMLNode('div', children=[HTMLNode('h1', 'This is a heading_1'), HTMLNode('h2', 'This is a heading_2'), HTMLNode('h3', 'This is a heading_3')])
+        self.assertEqual(results, expected)
 
-This is a paragraph of text. It has some **bold text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)
+    def test_markdown_to_html_code_quote(self):
+        markdown = '''``` This is a code block```
 
-``` This is a code block```
+> This is a quote block.'''
+        results = markdown_to_html_node(markdown)
+        expected = HTMLNode('div', children=[HTMLNode('pre', children=[LeafNode('code', 'This is a code block')]), HTMLNode('blockquote', 'This is a quote block.'), ])
+        self.assertEqual(results, expected)
 
-> This is a quote block.
-
-* This is the first list item in a unordered list block.
+    def test_markdown_to_html_ul(self):
+        markdown = '''* This is the first list item in a unordered list block.
 * This is a list item.
 * This is another list item.
-* This is the final list item.
+* This is the final list item.'''
+        results = markdown_to_html_node(markdown)
+        expected = HTMLNode('div', children=[HTMLNode('ul', children=[LeafNode('li', 'This is the first list item in a unordered list block.'), LeafNode('li', 'This is a list item.'), LeafNode('li', 'This is another list item.'), LeafNode('li', 'This is the final list item.')])])
+        self.assertEqual(results, expected)
 
-1. This is the first item of an ordered list.
+    def test_markdown_to_html_ol(self):
+        markdown = '''1. This is the first item of an ordered list.
 2. This is the second item of an ordered list.
 3. This is the final item of this ordered list.'''
         results = markdown_to_html_node(markdown)
-        expected = HTMLNode('div', children=[HTMLNode('h1', 'This is a heading_1'), HTMLNode('h2', 'This is a heading_2'), HTMLNode('h3', 'This is a heading_3'), HTMLNode('p', children=[TextNode('This is a paragraph of text. It has some ', 'text'), TextNode('bold text', 'bold'), TextNode(' with an ', 'text'), TextNode('italic', 'italic'), TextNode(' word and a ', 'text'), 
-TextNode('code block', 'code'), TextNode(' and an ', 'text'), TextNode('obi wan image', 'image', 'https://i.imgur.com/fJRm4Vk.jpeg'), TextNode(' and a ', 'text'), TextNode('link', 'link', 'https://boot.dev')]), HTMLNode('code', 'This is a code block'), HTMLNode('quote', 'This is a quote block.'), HTMLNode('unordered_list', children=[TextNode('This is the first list item in a unordered list block.', 'list_item'), TextNode('This is a list item.', 'list_item'), TextNode('This is another list item.', 'list_item'), TextNode('This is the final list item.', 'list_item')]), HTMLNode('ordered_list', children=[TextNode("1. This is the first item of an ordered list.", 'list_item'), TextNode('2. This is the second item of an ordered list.', 'list_item'), TextNode('3. This is the final item of this ordered list.', 'list_item')])])
-        print(results)
-
-        
+        expected = HTMLNode('div', children=[HTMLNode('ol', children=[LeafNode('li', 'This is the first item of an ordered list.'), LeafNode('li', 'This is the second item of an ordered list.'), LeafNode('li', 'This is the final item of this ordered list.')])])
+        self.assertEqual(results, expected)
 
 if __name__ == '__main__':
     unittest.main()
