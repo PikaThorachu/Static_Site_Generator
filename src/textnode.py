@@ -28,7 +28,6 @@ class TextNode:
     def __repr__(self):
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
 
-
 def text_node_to_html_node(text_node: TextNode) -> LeafNode:
     if text_node.text_type == TextType.TEXT.value:
         return LeafNode(None, text_node.text)
@@ -46,4 +45,3 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
         return LeafNode("li", text_node.text)
     else:
         raise ValueError(f"Invalid text type: {text_node.text_type}")
-
